@@ -3,11 +3,6 @@ import requests # for downloading webpages
 import re # for regular expressions
 import sys # for reading command line args
 
-#--------------------------
-# Ticker to CIK dictionary
-#--------------------------
-t2c_dict = {"GOOS" : "1690511", "UPS" : "1090727", "SNAP" : "1564408"}
-
 '''
 |||||||||||||||
 || FUNCTIONS ||
@@ -36,15 +31,10 @@ def get_ar_links(ticker, domestic = True):
     #--------------------
     form_type = "10-K" if domestic else "20-F" 
     
-    #----------------------
-    # Convert ticker to cik
-    #----------------------
-    cik = t2c_dict[ticker]
-    
     #-----------------------------------------------
     # SEC page where annual report links are located
     #-----------------------------------------------
-    edgar_entry_url = "https://www.sec.gov/cgi-bin/browse-edgar?CIK=" + cik + \
+    edgar_entry_url = "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=" + ticker + \
                       "&type=" + form_type + "&dateb=&owner=include&count=100"
 
     #-------------------------------------------------
@@ -60,9 +50,20 @@ def get_ar_links(ticker, domestic = True):
     #--------------------
     for link in links:
         ar_links.append("https://www.sec.gov" + link.get('href'))
+    
+    return ar_links
 
-    print(ar_links)
-    print(len(ar_links))
+
+######################################################
+##                                                  ##
+## Purpose: Extract net income data point from each ##
+##          annual report.                          ##
+##                                                  ##
+######################################################
+def get_net_income_data(ar_links):
+    for link in ar_links:
+        pass
+
 
 #-----------------------------
 # Get ticker from command line
@@ -78,4 +79,5 @@ tckr = sys.argv[1]
 #------------------
 # Test the function 
 #------------------
-get_ar_links(tckr, domestic = (sys.argv[2] == "domestic"))
+ar_links = get_ar_links(tckr, domestic = (sys.argv[2] == "domestic"))
+get_net_income_data(ar_links)
