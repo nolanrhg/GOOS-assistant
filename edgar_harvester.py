@@ -49,7 +49,8 @@ def get_ar_links(ticker, domestic = True):
     # Store all the links
     #--------------------
     for link in links:
-        ar_links.append("https://www.sec.gov" + link.get('href'))
+        url = "https://www.sec.gov" + link.get('href')
+        ar_links.append(re.sub(r"-index.\S*", ".txt", url))
     
     return ar_links
 
@@ -80,4 +81,4 @@ tckr = sys.argv[1]
 # Test the function 
 #------------------
 ar_links = get_ar_links(tckr, domestic = (sys.argv[2] == "domestic"))
-get_net_income_data(ar_links)
+print(ar_links)
