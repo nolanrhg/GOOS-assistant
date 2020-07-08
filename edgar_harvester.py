@@ -1,6 +1,7 @@
-from bs4 import BeautifulSoup
-import requests
-import re # regular expressions library
+from bs4 import BeautifulSoup # for easy data extraction from HTML
+import requests # for downloading webpages
+import re # for regular expressions
+import sys # for reading command line args
 
 ###########################
 ## Ticker to CIK dictionary
@@ -55,4 +56,16 @@ def get_ap_links(ticker, domestic = True):
     print(ap_links)
     print(len(ap_links))
 
-get_ap_links("GOOS", domestic = False)
+##############################
+# Get ticker from command line
+##############################
+if (len(sys.argv) < 2):
+	print("\nUsage: python3 edgar_harvester.py <TICKER>\n")
+	exit()
+
+tckr = sys.argv[1]
+
+###################
+# Test the function 
+###################
+get_ap_links(tckr, domestic = False)
