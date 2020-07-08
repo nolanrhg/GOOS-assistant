@@ -16,12 +16,12 @@ t2c_dict = {"GOOS" : "1690511", "UPS" : "1090727", "SNAP" : "1564408"}
 ##          10-K; otherwise it is called a     ##
 ##          20-F.                              ##
 #################################################
-def get_ap_links(ticker, domestic = True):
+def get_ar_links(ticker, domestic = True):
 
     ##################################### 
     # Storage for links to annual reports
     #####################################
-    ap_links = []
+    ar_links = []
     
     #####################
     # Determine form type
@@ -51,21 +51,23 @@ def get_ap_links(ticker, domestic = True):
     # store all the links
     #####################
     for link in links:
-        ap_links.append("https://www.sec.gov" + link.get('href'))
+        ar_links.append("https://www.sec.gov" + link.get('href'))
 
-    print(ap_links)
-    print(len(ap_links))
+    print(ar_links)
+    print(len(ar_links))
 
 ##############################
 # Get ticker from command line
 ##############################
-if (len(sys.argv) < 2):
-	print("\nUsage: python3 edgar_harvester.py <TICKER>\n")
-	exit()
+if (len(sys.argv) < 3):
+    print("INSUFFICIENT ARGUMENTS\nUsage: python3 edgar_harvester.py <TICKER> foreign/domestic")
+    exit()
+elif (sys.argv[2] != "foreign" and sys.argv[2] != "domestic"):
+    print("IS " + sys.argv[1] + " FOREIGN OR DOMESTIC?\nUsage: python3 edgar_harvester.py <TICKER> foreign/domestic")
+    exit()
 
 tckr = sys.argv[1]
-
 ###################
 # Test the function 
 ###################
-get_ap_links(tckr, domestic = False)
+get_ar_links(tckr, domestic = (sys.argv[2] == "domestic"))
