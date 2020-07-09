@@ -1,4 +1,5 @@
 import regex_lookup_values as rlv
+import lookup_error_messages as lem
 from bs4 import BeautifulSoup # for easy data extraction from HTML
 import requests # for downloading webpages
 import re # for regular expressions
@@ -50,11 +51,20 @@ def get_ar_links(ticker, domestic = True):
     # Store all the links
     #--------------------
     for link in links:
-        url = "https://www.sec.gov" + link.get('href')
+        try:
+            url = "https://www.sec.gov" + link.get('href')
+        except AttributeError:
+            print(lem.ATTRIB_ERR_MSG)
+            exit()
+
         webpage = requests.get(url).content
         soup = BeautifulSoup(webpage, 'lxml')
         link = soup.find('a', href = re.compile(r"" + rlv.GOOS_20F))
-        ar_links.append("https://www.sec.gov" + link.get('href'))
+        try:
+            ar_links.append("https://www.sec.gov" + link.get('href'))
+        except AttributeError:
+            print(lem.ATTRIB_ERR_MSG)
+            exit()
     
     return ar_links
 
