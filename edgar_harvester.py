@@ -1,3 +1,4 @@
+import regex_lookup_values as rlv
 from bs4 import BeautifulSoup # for easy data extraction from HTML
 import requests # for downloading webpages
 import re # for regular expressions
@@ -50,7 +51,10 @@ def get_ar_links(ticker, domestic = True):
     #--------------------
     for link in links:
         url = "https://www.sec.gov" + link.get('href')
-        ar_links.append(re.sub(r"-index.\S*", ".txt", url))
+        webpage = requests.get(url).content
+        soup = BeautifulSoup(webpage, 'lxml')
+        link = soup.find('a', href = re.compile(r"" + rlv.GOOS_20F))
+        ar_links.append("https://www.sec.gov" + link.get('href'))
     
     return ar_links
 
@@ -62,9 +66,14 @@ def get_ar_links(ticker, domestic = True):
 ##                                                  ##
 ######################################################
 def get_net_income_data(ar_links):
-    for link in ar_links:
-        pass
 
+    net_income_regex = re.compile(r"\s*Net (income|loss)+\s*")
+
+    for link in ar_links:
+        form = requests.get(link).text
+        for line in form.split("\n"):
+            if re.match(net_income_regex, line):
+                    print(line)
 
 #-----------------------------
 # Get ticker from command line
